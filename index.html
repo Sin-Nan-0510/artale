@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artale 龍王遠征隊伍分配系統</title>
-
+    <title>Artale 龍王遠征隊伍分配</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -12,153 +11,79 @@
 
 <div class="max-w-7xl mx-auto">
 
-    <!-- =========================
-         標題
-    ========================== -->
-
+    <!-- 標題 -->
     <header class="mb-6 text-center">
-
         <h1 class="text-3xl font-bold tracking-wider text-amber-400 mb-2">
-            Artale 隊伍分配
+            Artale 龍王遠征隊伍分配
         </h1>
-
         <p id="summary" class="text-slate-400 text-sm">
             目前 5 團・每團 12 人（第一隊 6 人、第二隊 6 人）
         </p>
-
     </header>
 
-
-
-    <!-- =========================
-         團數控制
-    ========================== -->
-
+    <!-- 團數控制 -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-6 shadow-lg">
-
         <div class="flex flex-wrap items-center justify-between gap-3">
-
             <div>
-
                 <h2 class="text-lg font-bold text-amber-400">
                     🗂️ 遠征團管理
                 </h2>
-
                 <p class="text-xs text-slate-400 mt-1">
                     預設 5 團，每團分為第一隊與第二隊，各 6 人。
                 </p>
-
             </div>
 
-
             <div class="flex items-center gap-2">
-
                 <button
                     onclick="removeGroup()"
                     class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-semibold transition">
-
                     ➖ 減少一團
-
                 </button>
-
 
                 <span
                     id="group-count"
                     class="min-w-16 text-center bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg font-bold">
-
                     5 / 5
-
                 </span>
-
 
                 <button
                     onclick="addGroup()"
                     class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg font-semibold transition">
-
                     ➕ 新增一團
-
                 </button>
-
             </div>
-
         </div>
 
-
-        <!-- 團隊按鈕 -->
-
-        <div
-            id="group-tabs"
-            class="flex flex-wrap gap-2 mt-4">
-        </div>
-
+        <!-- 團隊按鈕＋時間 -->
+        <div id="group-tabs" class="flex flex-wrap gap-4 mt-4"></div>
     </div>
 
-
-
-    <!-- =========================
-         主內容
-    ========================== -->
-
+    <!-- 主內容 -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
+        <!-- 左側 -->
+        <div class="lg:col-span-2 space-y-6" id="teams-area"></div>
 
-        <!-- =========================
-             左側
-        ========================== -->
-
-        <div
-            class="lg:col-span-2 space-y-6"
-            id="teams-area">
-        </div>
-
-
-
-        <!-- =========================
-             右側
-        ========================== -->
-
+        <!-- 右側 -->
         <div class="space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg sticky top-6">
 
-            <div
-                class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg sticky top-6">
-
-
-                <h2
-                    class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
-
+                <h2 class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
                     <span>📋</span>
-
                     快速貼上與匯入
-
                 </h2>
 
-
-
                 <p class="text-xs text-slate-400 mb-3">
-
                     請直接貼上格式化名單，例如：
-
                     <br>
-
-                    <code class="text-emerald-300">
-                        195 冰雷 小夜 左上
-                    </code>
-
+                    <code class="text-emerald-300">195 冰雷 小夜 左上</code>
                     <br>
-
-                    <code class="text-emerald-300">
-                        169 聖騎 琉雲 左上
-                    </code>
-
+                    <code class="text-emerald-300">169 聖騎 琉雲 左上</code>
                     <br>
-
                     <span class="text-amber-400">
                         ⚠️ 待分配名單為「全部 5 團共用」。
                     </span>
-
                 </p>
-
-
 
                 <textarea
                     id="paste-input"
@@ -168,84 +93,41 @@
 169 聖騎 琉雲 左上
 166 刀賊 歐巴 左中"></textarea>
 
-
-
                 <button
                     onclick="handleBatchImport()"
                     class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-md">
-
                     ➕ 加入共用待分配名單
-
                 </button>
 
-
-
                 <hr class="border-slate-700 my-5">
-
-
 
                 <button
                     onclick="clearCurrentGroup()"
                     class="w-full bg-rose-900/50 hover:bg-rose-900 text-rose-200 border border-rose-700 font-semibold py-2.5 px-4 rounded-lg text-sm transition">
-
                     🗑️ 清空目前團
-
                 </button>
-
-
 
                 <button
                     onclick="clearAllData()"
                     class="w-full mt-3 bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 font-semibold py-2.5 px-4 rounded-lg text-sm transition">
-
                     🗑️ 清空全部
-
                 </button>
 
-
-
-                <div
-                    class="mt-6 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-1">
-
-                    <p class="font-semibold text-slate-300">
-                        💡 操作提示：
-                    </p>
-
-                    <p>
-                        1. 選擇要配置的團。
-                    </p>
-
-                    <p>
-                        2. 貼上玩家名單。
-                    </p>
-
-                    <p>
-                        3. 名單會進入「共用待分配名單」。
-                    </p>
-
-                    <p>
-                        4. 可以從共用名單分配到目前團的 1隊／2隊。
-                    </p>
-
-                    <p>
-                        5. 切換團時，共用名單不會改變。
-                    </p>
-
-                    <p>
-                        6. 資料會自動儲存在瀏覽器。
-                    </p>
-
+                <div class="mt-6 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-1">
+                    <p class="font-semibold text-slate-300">💡 操作提示：</p>
+                    <p>1. 選擇要配置的團。</p>
+                    <p>2. 貼上玩家名單。</p>
+                    <p>3. 名單會進入「共用待分配名單」。</p>
+                    <p>4. 可以從共用名單分配到目前團的 1隊／2隊。</p>
+                    <p>5. 切換團時，共用名單不會改變。</p>
+                    <p>6. 資料會自動儲存在瀏覽器。</p>
                 </div>
 
             </div>
-
         </div>
 
     </div>
-
 </div>
-
-
 
 <script>
 
@@ -254,11 +136,8 @@
 ========================================================= */
 
 const STORAGE_KEY = 'artale_ryuou_groups_state_v5';
-
 const MAX_GROUPS = 5;
-
 const MAX_TEAM_SIZE = 6;
-
 
 
 /* =========================================================
@@ -266,17 +145,12 @@ const MAX_TEAM_SIZE = 6;
 ========================================================= */
 
 function emptyGroup() {
-
     return {
-
         team1: [],
-
-        team2: []
-
+        team2: [],
+        time: ''
     };
-
 }
-
 
 
 /* =========================================================
@@ -284,23 +158,14 @@ function emptyGroup() {
 ========================================================= */
 
 function createDefaultGroups() {
-
     return [
-
         emptyGroup(),
-
         emptyGroup(),
-
         emptyGroup(),
-
         emptyGroup(),
-
         emptyGroup()
-
     ];
-
 }
-
 
 
 /* =========================================================
@@ -310,65 +175,39 @@ function createDefaultGroups() {
 let saved = null;
 
 try {
-
     saved = JSON.parse(
         localStorage.getItem(STORAGE_KEY) || 'null'
     );
-
 } catch (e) {
-
     saved = null;
-
 }
 
-
-
 let state;
-
-
-
-/*
-    新版資料結構：
-
-    state = {
-
-        activeGroup: 0,
-
-        pool: [],
-
-        groups: [
-            {
-                team1: [],
-                team2: []
-            }
-        ]
-
-    }
-*/
-
 
 if (
     saved &&
     Array.isArray(saved.groups) &&
     Array.isArray(saved.pool)
 ) {
-
     state = saved;
-
 } else {
-
     state = {
-
         activeGroup: 0,
-
         pool: [],
-
         groups: createDefaultGroups()
-
     };
-
 }
 
+
+/* =========================================================
+   舊資料相容處理
+========================================================= */
+
+state.groups.forEach(group => {
+    if (typeof group.time !== 'string') {
+        group.time = '';
+    }
+});
 
 
 /* =========================================================
@@ -377,22 +216,9 @@ if (
 
 state.groups = state.groups.slice(0, MAX_GROUPS);
 
-
-
-/* =========================================================
-   不足 5 團就補滿
-========================================================= */
-
-while (
-    state.groups.length < MAX_GROUPS
-) {
-
-    state.groups.push(
-        emptyGroup()
-    );
-
+while (state.groups.length < MAX_GROUPS) {
+    state.groups.push(emptyGroup());
 }
-
 
 
 /* =========================================================
@@ -404,11 +230,8 @@ if (
     state.activeGroup < 0 ||
     state.activeGroup >= state.groups.length
 ) {
-
     state.activeGroup = 0;
-
 }
-
 
 
 /* =========================================================
@@ -416,13 +239,8 @@ if (
 ========================================================= */
 
 function currentGroup() {
-
-    return state.groups[
-        state.activeGroup
-    ];
-
+    return state.groups[state.activeGroup];
 }
-
 
 
 /* =========================================================
@@ -430,19 +248,13 @@ function currentGroup() {
 ========================================================= */
 
 function saveState() {
-
     localStorage.setItem(
-
         STORAGE_KEY,
-
         JSON.stringify(state)
-
     );
 
     render();
-
 }
-
 
 
 /* =========================================================
@@ -450,31 +262,16 @@ function saveState() {
 ========================================================= */
 
 function addGroup() {
-
-    if (
-        state.groups.length >= MAX_GROUPS
-    ) {
-
+    if (state.groups.length >= MAX_GROUPS) {
         alert('目前已經有 5 團。');
-
         return;
-
     }
 
-
-    state.groups.push(
-        emptyGroup()
-    );
-
-
-    state.activeGroup =
-        state.groups.length - 1;
-
+    state.groups.push(emptyGroup());
+    state.activeGroup = state.groups.length - 1;
 
     saveState();
-
 }
-
 
 
 /* =========================================================
@@ -482,29 +279,17 @@ function addGroup() {
 ========================================================= */
 
 function removeGroup() {
-
-    if (
-        state.groups.length <= 1
-    ) {
-
+    if (state.groups.length <= 1) {
         alert('至少要保留 1 團。');
-
         return;
-
     }
 
-
-    const index =
-        state.activeGroup;
-
-    const group =
-        state.groups[index];
-
+    const index = state.activeGroup;
+    const group = state.groups[index];
 
     const total =
         group.team1.length +
         group.team2.length;
-
 
     if (
         total > 0 &&
@@ -512,50 +297,20 @@ function removeGroup() {
             `第 ${index + 1} 團目前有 ${total} 人，確定要刪除這一團嗎？`
         )
     ) {
-
         return;
-
     }
 
+    state.pool.push(...group.team1);
+    state.pool.push(...group.team2);
 
-    /*
-        刪除團伍時：
+    state.groups.splice(index, 1);
 
-        該團玩家會回到共用待分配名單
-
-        避免玩家直接消失
-    */
-
-    state.pool.push(
-        ...group.team1
-    );
-
-    state.pool.push(
-        ...group.team2
-    );
-
-
-    state.groups.splice(
-        index,
-        1
-    );
-
-
-    if (
-        state.activeGroup >=
-        state.groups.length
-    ) {
-
-        state.activeGroup =
-            state.groups.length - 1;
-
+    if (state.activeGroup >= state.groups.length) {
+        state.activeGroup = state.groups.length - 1;
     }
-
 
     saveState();
-
 }
-
 
 
 /* =========================================================
@@ -563,14 +318,37 @@ function removeGroup() {
 ========================================================= */
 
 function selectGroup(index) {
-
-    state.activeGroup =
-        index;
-
+    state.activeGroup = index;
     saveState();
-
 }
 
+
+/* =========================================================
+   更新團隊時間
+========================================================= */
+
+function updateGroupTime(index, time) {
+    if (!state.groups[index]) {
+        return;
+    }
+
+    /* 只允許 HH:MM */
+    time = time.trim();
+
+    const match = time.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+    if (time !== '' && !match) {
+        alert('時間格式請輸入 HH:MM，例如 19:30');
+        return;
+    }
+
+    state.groups[index].time = time;
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+    );
+}
 
 
 /* =========================================================
@@ -578,433 +356,139 @@ function selectGroup(index) {
 ========================================================= */
 
 function handleBatchImport() {
-
-    const input =
-        document.getElementById(
-            'paste-input'
-        );
-
-
-    const text =
-        input.value.trim();
-
+    const input = document.getElementById('paste-input');
+    const text = input.value.trim();
 
     if (!text) {
-
         alert('請先貼上名單。');
-
         return;
-
     }
 
-
     let addedCount = 0;
-
     let skippedCount = 0;
 
+    text.split(/\r?\n/).forEach(line => {
+        line = line.trim();
 
+        if (!line) {
+            return;
+        }
 
-    text
-        .split(/\r?\n/)
-        .forEach(line => {
+        const parts = line.split(/\s+/);
 
-            line = line.trim();
+        let name = '';
+        let job = '';
+        let position = '';
 
-
-            if (!line) {
-
-                return;
-
+        if (parts.length === 1) {
+            name = parts[0];
+            job = '未填';
+        } else if (parts.length === 2) {
+            name = parts[0];
+            job = parts[1];
+        } else if (parts.length === 3) {
+            if (!isNaN(parts[0])) {
+                job = parts[1];
+                name = parts[2];
+            } else {
+                job = parts[0];
+                name = parts[1];
+                position = parts[2];
             }
-
-
-            const parts =
-                line.split(/\s+/);
-
-
-            let name = '';
-
-            let job = '';
-
-            let position = '';
-
-
-
-            /* -----------------------------------------
-               1 個欄位
-
-               小夜
-            ----------------------------------------- */
-
-            if (
-                parts.length === 1
-            ) {
-
-                name =
-                    parts[0];
-
-                job =
-                    '未填';
-
+        } else {
+            if (!isNaN(parts[0])) {
+                job = parts[1];
+                name = parts[2];
+                position = parts.slice(3).join(' ');
+            } else {
+                job = parts[0];
+                name = parts[1];
+                position = parts.slice(2).join(' ');
             }
-
-
-
-            /* -----------------------------------------
-               2 個欄位
-
-               小夜 冰雷
-            ----------------------------------------- */
-
-            else if (
-                parts.length === 2
-            ) {
-
-                name =
-                    parts[0];
-
-                job =
-                    parts[1];
-
-            }
-
-
-
-            /* -----------------------------------------
-               3 個欄位
-
-               195 冰雷 小夜
-
-               冰雷 小夜 左上
-            ----------------------------------------- */
-
-            else if (
-                parts.length === 3
-            ) {
-
-                if (
-                    !isNaN(parts[0])
-                ) {
-
-                    job =
-                        parts[1];
-
-                    name =
-                        parts[2];
-
-                } else {
-
-                    job =
-                        parts[0];
-
-                    name =
-                        parts[1];
-
-                    position =
-                        parts[2];
-
-                }
-
-            }
-
-
-
-            /* -----------------------------------------
-               4 個以上
-
-               195 冰雷 小夜 左上
-            ----------------------------------------- */
-
-            else {
-
-                if (
-                    !isNaN(parts[0])
-                ) {
-
-                    job =
-                        parts[1];
-
-                    name =
-                        parts[2];
-
-                    position =
-                        parts
-                            .slice(3)
-                            .join(' ');
-
-                } else {
-
-                    job =
-                        parts[0];
-
-                    name =
-                        parts[1];
-
-                    position =
-                        parts
-                            .slice(2)
-                            .join(' ');
-
-                }
-
-            }
-
-
-
-            /* -----------------------------------------
-               沒有名字
-            ----------------------------------------- */
-
-            if (!name) {
-
-                skippedCount++;
-
-                return;
-
-            }
-
-
-
-            /* -----------------------------------------
-               顯示職業
-            ----------------------------------------- */
-
-            let displayJob =
-                job;
-
-
-            if (position) {
-
-                displayJob =
-                    `${job} (${position})`;
-
-            }
-
-
-
-            /* -----------------------------------------
-               加入「共用待分配名單」
-
-               ★ 不屬於任何一團
-            ----------------------------------------- */
-
-            state.pool.push({
-
-                id:
-                    Date.now() +
-                    '-' +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 10),
-
-                name:
-                    name,
-
-                job:
-                    displayJob
-
-            });
-
-
-            addedCount++;
-
+        }
+
+        if (!name) {
+            skippedCount++;
+            return;
+        }
+
+        let displayJob = job;
+
+        if (position) {
+            displayJob = `${job} (${position})`;
+        }
+
+        state.pool.push({
+            id:
+                Date.now() +
+                '-' +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 10),
+            name: name,
+            job: displayJob
         });
 
-
+        addedCount++;
+    });
 
     input.value = '';
 
-
     saveState();
 
-
-
-    if (
-        skippedCount > 0
-    ) {
-
+    if (skippedCount > 0) {
         alert(
             `成功加入 ${addedCount} 人。\n` +
             `${skippedCount} 筆資料無法解析。`
         );
-
     } else {
-
         alert(
             `成功加入 ${addedCount} 人到共用待分配名單。`
         );
-
     }
-
 }
-
 
 
 /* =========================================================
    移動玩家
 ========================================================= */
 
-function moveTo(
-    index,
-    fromGroup,
-    toGroup
-) {
-
-    const group =
-        currentGroup();
-
+function moveTo(index, fromGroup, toGroup) {
+    const group = currentGroup();
     let item;
 
-
-
-    /* -----------------------------------------
-       從共用待分配名單移動
-    ----------------------------------------- */
-
-    if (
-        fromGroup === 'pool'
-    ) {
-
-        item =
-            state.pool.splice(
-                index,
-                1
-            )[0];
-
+    if (fromGroup === 'pool') {
+        item = state.pool.splice(index, 1)[0];
+    } else if (fromGroup === 'team1') {
+        item = group.team1.splice(index, 1)[0];
+    } else if (fromGroup === 'team2') {
+        item = group.team2.splice(index, 1)[0];
     }
-
-
-
-    /* -----------------------------------------
-       從第一隊移動
-    ----------------------------------------- */
-
-    else if (
-        fromGroup === 'team1'
-    ) {
-
-        item =
-            group.team1.splice(
-                index,
-                1
-            )[0];
-
-    }
-
-
-
-    /* -----------------------------------------
-       從第二隊移動
-    ----------------------------------------- */
-
-    else if (
-        fromGroup === 'team2'
-    ) {
-
-        item =
-            group.team2.splice(
-                index,
-                1
-            )[0];
-
-    }
-
-
 
     if (!item) {
-
         return;
-
     }
 
-
-
-    /* -----------------------------------------
-       移回共用待分配名單
-    ----------------------------------------- */
-
-    if (
-        toGroup === 'pool'
-    ) {
-
-        state.pool.push(
-            item
-        );
-
-    }
-
-
-
-    /* -----------------------------------------
-       移到第一隊
-    ----------------------------------------- */
-
-    else if (
-        toGroup === 'team1'
-    ) {
-
-        if (
-            group.team1.length <
-            MAX_TEAM_SIZE
-        ) {
-
-            group.team1.push(
-                item
-            );
-
+    if (toGroup === 'pool') {
+        state.pool.push(item);
+    } else if (toGroup === 'team1') {
+        if (group.team1.length < MAX_TEAM_SIZE) {
+            group.team1.push(item);
         } else {
-
-            alert(
-                '第一隊已滿（6人）'
-            );
-
-            state.pool.push(
-                item
-            );
-
+            alert('第一隊已滿（6人）');
+            state.pool.push(item);
         }
-
-    }
-
-
-
-    /* -----------------------------------------
-       移到第二隊
-    ----------------------------------------- */
-
-    else if (
-        toGroup === 'team2'
-    ) {
-
-        if (
-            group.team2.length <
-            MAX_TEAM_SIZE
-        ) {
-
-            group.team2.push(
-                item
-            );
-
+    } else if (toGroup === 'team2') {
+        if (group.team2.length < MAX_TEAM_SIZE) {
+            group.team2.push(item);
         } else {
-
-            alert(
-                '第二隊已滿（6人）'
-            );
-
-            state.pool.push(
-                item
-            );
-
+            alert('第二隊已滿（6人）');
+            state.pool.push(item);
         }
-
     }
-
-
 
     saveState();
-
 }
-
 
 
 /* =========================================================
@@ -1012,15 +496,11 @@ function moveTo(
 ========================================================= */
 
 function clearCurrentGroup() {
-
-    const group =
-        currentGroup();
-
+    const group = currentGroup();
 
     const total =
         group.team1.length +
         group.team2.length;
-
 
     if (
         !confirm(
@@ -1029,34 +509,18 @@ function clearCurrentGroup() {
             `這些玩家會回到「共用待分配名單」。`
         )
     ) {
-
         return;
-
     }
-
-
-
-    /*
-        ★ 清空目前團
-        ★ 玩家不消失
-        ★ 回到共用待分配
-    */
 
     state.pool.push(
         ...group.team1,
         ...group.team2
     );
 
-
-    state.groups[
-        state.activeGroup
-    ] = emptyGroup();
-
+    state.groups[state.activeGroup] = emptyGroup();
 
     saveState();
-
 }
-
 
 
 /* =========================================================
@@ -1064,112 +528,70 @@ function clearCurrentGroup() {
 ========================================================= */
 
 function clearAllData() {
-
     if (
         !confirm(
             '確定要清空全部資料嗎？\n\n' +
             '包含：\n' +
             '• 共用待分配名單\n' +
             '• 第 1～5 團\n' +
-            '• 所有第一隊／第二隊'
+            '• 所有第一隊／第二隊\n' +
+            '• 各團設定的時間'
         )
     ) {
-
         return;
-
     }
 
-
-    /*
-        ★ 清空後仍然保留 5 團
-    */
-
     state = {
-
         activeGroup: 0,
-
         pool: [],
-
-        groups:
-            createDefaultGroups()
-
+        groups: createDefaultGroups()
     };
 
-
     saveState();
-
 }
-
 
 
 /* =========================================================
    成員卡片
 ========================================================= */
 
-function memberCard(
-    p,
-    index,
-    teamName
-) {
-
+function memberCard(p, index, teamName) {
     const color =
         teamName === 'team1'
             ? 'sky'
             : 'rose';
-
 
     const arrow =
         teamName === 'team1'
             ? '➡️'
             : '⬅️';
 
-
     const target =
         teamName === 'team1'
             ? 'team2'
             : 'team1';
-
 
     const title =
         teamName === 'team1'
             ? '移至第二隊'
             : '移至第一隊';
 
-
-
     return `
-
-        <div
-            class="bg-slate-900/80 border border-${color}-500/30 rounded-lg p-3 flex justify-between items-center shadow">
+        <div class="bg-slate-900/80 border border-${color}-500/30 rounded-lg p-3 flex justify-between items-center shadow">
 
             <div class="min-w-0 pr-2">
-
-                <span
-                    class="text-xs text-${color}-400 font-bold mr-1.5">
-
+                <span class="text-xs text-${color}-400 font-bold mr-1.5">
                     #${index + 1}
-
                 </span>
 
-
-                <span
-                    class="font-bold text-slate-100">
-
+                <span class="font-bold text-slate-100">
                     ${escapeHtml(p.name)}
-
                 </span>
 
-
-                <span
-                    class="text-xs text-slate-300 ml-1.5 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
-
+                <span class="text-xs text-slate-300 ml-1.5 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
                     ${escapeHtml(p.job)}
-
                 </span>
-
             </div>
-
-
 
             <div class="flex gap-1 shrink-0">
 
@@ -1177,289 +599,156 @@ function memberCard(
                     onclick="moveTo(${index}, '${teamName}', '${target}')"
                     title="${title}"
                     class="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-slate-300">
-
                     ${arrow}
-
                 </button>
-
 
                 <button
                     onclick="moveTo(${index}, '${teamName}', 'pool')"
                     title="退回共用待分配名單"
                     class="text-xs bg-rose-900/60 hover:bg-rose-800 px-2 py-1 rounded text-rose-200">
-
                     ❌
-
                 </button>
 
             </div>
-
         </div>
-
     `;
-
 }
-
 
 
 /* =========================================================
    顯示隊伍
 ========================================================= */
 
-function renderTeam(
-    teamName,
-    title,
-    emoji,
-    color
-) {
-
-    const group =
-        currentGroup();
-
-
-    const members =
-        group[teamName];
-
+function renderTeam(teamName, title, emoji, color) {
+    const group = currentGroup();
+    const members = group[teamName];
 
     let html = `
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
 
-        <div
-            class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
 
-            <div
-                class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
-
-                <h2
-                    class="text-xl font-bold text-${color}-400 flex items-center gap-2">
-
+                <h2 class="text-xl font-bold text-${color}-400 flex items-center gap-2">
                     <span>${emoji}</span>
-
                     ${title}
 
-                    <span
-                        class="text-sm font-normal text-slate-400">
-
+                    <span class="text-sm font-normal text-slate-400">
                         (上限 6 人)
-
                     </span>
-
                 </h2>
 
-
-                <span
-                    class="bg-${color}-900 text-${color}-200 text-xs px-2.5 py-1 rounded-full font-semibold">
-
+                <span class="bg-${color}-900 text-${color}-200 text-xs px-2.5 py-1 rounded-full font-semibold">
                     ${members.length} / 6
-
                 </span>
 
             </div>
 
-
-            <div
-                class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-h-[120px]">
-
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-h-[120px]">
     `;
 
-
-
-    for (
-        let i = 0;
-        i < MAX_TEAM_SIZE;
-        i++
-    ) {
-
-        if (
-            i < members.length
-        ) {
-
-            html +=
-                memberCard(
-                    members[i],
-                    i,
-                    teamName
-                );
-
+    for (let i = 0; i < MAX_TEAM_SIZE; i++) {
+        if (i < members.length) {
+            html += memberCard(
+                members[i],
+                i,
+                teamName
+            );
         } else {
-
             html += `
-
-                <div
-                    class="border border-dashed border-slate-700 rounded-lg p-3 flex items-center justify-center text-slate-600 text-xs">
-
+                <div class="border border-dashed border-slate-700 rounded-lg p-3 flex items-center justify-center text-slate-600 text-xs">
                     (空位)
-
                 </div>
-
             `;
-
         }
-
     }
 
-
-
     html += `
-
             </div>
-
         </div>
-
     `;
 
-
     return html;
-
 }
-
 
 
 /* =========================================================
-   ★ 共用待分配名單
+   共用待分配名單
 ========================================================= */
 
 function renderPool() {
-
     let html = `
+        <div class="bg-slate-800 border border-amber-500/30 rounded-xl p-5 shadow-lg">
 
-        <div
-            class="bg-slate-800 border border-amber-500/30 rounded-xl p-5 shadow-lg">
-
-            <div
-                class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
 
                 <div>
-
-                    <h2
-                        class="text-xl font-bold text-amber-400 flex items-center gap-2">
-
+                    <h2 class="text-xl font-bold text-amber-400 flex items-center gap-2">
                         <span>👥</span>
-
                         共用待分配名單
-
                     </h2>
 
-
-                    <p
-                        class="text-xs text-slate-500 mt-1">
-
+                    <p class="text-xs text-slate-500 mt-1">
                         第 1～5 團共用同一份名單
-
                     </p>
-
                 </div>
 
-
-                <span
-                    class="bg-amber-900 text-amber-200 text-xs px-2.5 py-1 rounded-full font-semibold">
-
+                <span class="bg-amber-900 text-amber-200 text-xs px-2.5 py-1 rounded-full font-semibold">
                     ${state.pool.length} 人
-
                 </span>
 
             </div>
 
-
-            <div
-                class="flex flex-wrap gap-2 min-h-[80px]">
-
+            <div class="flex flex-wrap gap-2 min-h-[80px]">
     `;
 
-
-
-    if (
-        state.pool.length === 0
-    ) {
-
+    if (state.pool.length === 0) {
         html += `
-
-            <p
-                class="text-slate-500 text-sm italic py-2">
-
+            <p class="text-slate-500 text-sm italic py-2">
                 目前沒有待分配成員。
-
             </p>
-
         `;
+    } else {
+        state.pool.forEach((p, index) => {
+            html += `
+                <div class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 flex items-center gap-2 text-sm shadow">
 
-    }
+                    <div>
+                        <span class="font-semibold text-slate-200">
+                            ${escapeHtml(p.name)}
+                        </span>
 
-    else {
-
-        state.pool.forEach(
-            (p, index) => {
-
-                html += `
-
-                    <div
-                        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 flex items-center gap-2 text-sm shadow">
-
-                        <div>
-
-                            <span
-                                class="font-semibold text-slate-200">
-
-                                ${escapeHtml(p.name)}
-
-                            </span>
-
-
-                            <span
-                                class="text-xs text-slate-300 ml-1 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
-
-                                ${escapeHtml(p.job)}
-
-                            </span>
-
-                        </div>
-
-
-                        <div
-                            class="flex gap-1 ml-2">
-
-                            <button
-                                onclick="moveTo(${index}, 'pool', 'team1')"
-                                class="text-xs bg-sky-900 hover:bg-sky-800 text-sky-200 px-1.5 py-0.5 rounded">
-
-                                1隊
-
-                            </button>
-
-
-                            <button
-                                onclick="moveTo(${index}, 'pool', 'team2')"
-                                class="text-xs bg-rose-900 hover:bg-rose-800 text-rose-200 px-1.5 py-0.5 rounded">
-
-                                2隊
-
-                            </button>
-
-                        </div>
-
+                        <span class="text-xs text-slate-300 ml-1 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                            ${escapeHtml(p.job)}
+                        </span>
                     </div>
 
-                `;
+                    <div class="flex gap-1 ml-2">
 
-            }
-        );
+                        <button
+                            onclick="moveTo(${index}, 'pool', 'team1')"
+                            class="text-xs bg-sky-900 hover:bg-sky-800 text-sky-200 px-1.5 py-0.5 rounded">
+                            1隊
+                        </button>
 
+                        <button
+                            onclick="moveTo(${index}, 'pool', 'team2')"
+                            class="text-xs bg-rose-900 hover:bg-rose-800 text-rose-200 px-1.5 py-0.5 rounded">
+                            2隊
+                        </button>
+
+                    </div>
+                </div>
+            `;
+        });
     }
 
-
-
     html += `
-
             </div>
-
         </div>
-
     `;
 
-
     return html;
-
 }
-
 
 
 /* =========================================================
@@ -1467,36 +756,13 @@ function renderPool() {
 ========================================================= */
 
 function escapeHtml(value) {
-
     return String(value)
-
-        .replaceAll(
-            '&',
-            '&amp;'
-        )
-
-        .replaceAll(
-            '<',
-            '&lt;'
-        )
-
-        .replaceAll(
-            '>',
-            '&gt;'
-        )
-
-        .replaceAll(
-            '"',
-            '&quot;'
-        )
-
-        .replaceAll(
-            "'",
-            '&#039;'
-        );
-
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
 }
-
 
 
 /* =========================================================
@@ -1504,98 +770,59 @@ function escapeHtml(value) {
 ========================================================= */
 
 function render() {
+    const count = state.groups.length;
 
-    const count =
-        state.groups.length;
-
-
-
-    document
-        .getElementById('group-count')
-        .innerText =
+    document.getElementById('group-count').innerText =
         `${count} / 5`;
 
-
-
-    document
-        .getElementById('summary')
-        .innerText =
+    document.getElementById('summary').innerText =
         `目前 ${count} 團・每團 12 人（第一隊 6 人、第二隊 6 人）・共用待分配 ${state.pool.length} 人`;
 
+    const tabs = document.getElementById('group-tabs');
 
+    tabs.innerHTML = state.groups.map((group, i) => `
+        <div class="flex flex-col items-center gap-1">
 
-    /* -----------------------------------------
-       團隊按鈕
-    ----------------------------------------- */
+            <button
+                onclick="selectGroup(${i})"
+                class="px-4 py-2 rounded-lg font-semibold text-sm transition
+                ${
+                    i === state.activeGroup
+                        ? 'bg-amber-500 text-slate-950 shadow-md'
+                        : 'bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                }">
+                第 ${i + 1} 團
+            </button>
 
-    const tabs =
-        document.getElementById(
-            'group-tabs'
-        );
+            <input
+                type="text"
+                value="${escapeHtml(group.time || '')}"
+                placeholder="19:30"
+                maxlength="5"
+                inputmode="numeric"
+                onchange="updateGroupTime(${i}, this.value)"
+                class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-sm text-slate-200 text-center focus:outline-none focus:border-amber-500"
+                title="設定第 ${i + 1} 團時間">
+        </div>
+    `).join('');
 
-
-    tabs.innerHTML =
-        state.groups
-            .map(
-                (_, i) => `
-
-                    <button
-                        onclick="selectGroup(${i})"
-
-                        class="px-4 py-2 rounded-lg font-semibold text-sm transition
-
-                        ${
-                            i === state.activeGroup
-
-                                ? 'bg-amber-500 text-slate-950 shadow-md'
-
-                                : 'bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700'
-                        }">
-
-                        第 ${i + 1} 團
-
-                    </button>
-
-                `
-            )
-            .join('');
-
-
-
-    /* -----------------------------------------
-       左側內容
-    ----------------------------------------- */
-
-    const area =
-        document.getElementById(
-            'teams-area'
-        );
-
+    const area = document.getElementById('teams-area');
 
     area.innerHTML =
-
         renderTeam(
             'team1',
             '第一隊',
             '⚔️',
             'sky'
-        )
-
-        +
-
+        ) +
         renderTeam(
             'team2',
             '第二隊',
             '⚔️',
             'rose'
-        )
-
-        +
-
+        ) +
         renderPool();
-
 }
-
 
 
 /* =========================================================
