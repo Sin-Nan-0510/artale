@@ -129,7 +129,41 @@
     </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+
 <script>
+
+/* =========================================================
+   Firebase 設定
+   請將下面內容替換成你自己的 Firebase 專案設定
+========================================================= */
+
+const firebaseConfig = {
+    apiKey: "請填入 Firebase apiKey",
+    authDomain: "請填入 Firebase authDomain",
+    databaseURL: "請填入 Firebase databaseURL",
+    projectId: "請填入 Firebase projectId",
+    storageBucket: "請填入 Firebase storageBucket",
+    messagingSenderId: "請填入 Firebase messagingSenderId",
+    appId: "請填入 Firebase appId"
+};
+
+const FIREBASE_PATH = 'artale_ryuou_shared_state';
+
+let database = null;
+let firebaseEnabled = false;
+
+try {
+    if (!firebaseConfig.apiKey.startsWith('請填入')) {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        firebaseEnabled = true;
+    }
+} catch (e) {
+    console.error('Firebase 初始化失敗：', e);
+}
 
 /* =========================================================
    基本設定
@@ -172,67 +206,75 @@ function createDefaultGroups() {
    初始化
 ========================================================= */
 
-let saved = null;
+let state = {
+    activeGroup: 0,
+    pool: [],
+    groups: createDefaultGroups()
+};
 
-try {
-    saved = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || 'null'
-    );
-} catch (e) {
-    saved = null;
-}
+let isRemoteUpdate = false;
 
-let state;
-
-if (
-    saved &&
-    Array.isArray(saved.groups) &&
-    Array.isArray(saved.pool)
-) {
-    state = saved;
-} else {
-    state = {
-        activeGroup: 0,
-        pool: [],
-        groups: createDefaultGroups()
-    };
-}
-
-
-/* =========================================================
-   舊資料相容處理
-========================================================= */
-
-state.groups.forEach(group => {
-    if (typeof group.time !== 'string') {
-        group.time = '';
+function normalizeState(data) {
+    if (!data || !Array.isArray(data.groups) || !Array.isArray(data.pool)) {
+        return {
+            activeGroup: 0,
+            pool: [],
+            groups: createDefaultGroups()
+        };
     }
-});
 
+    data.groups = data.groups.slice(0, MAX_GROUPS);
 
-/* =========================================================
-   確保最多 5 團
-========================================================= */
+    while (data.groups.length < MAX_GROUPS) {
+        data.groups.push(emptyGroup());
+    }
 
-state.groups = state.groups.slice(0, MAX_GROUPS);
+    if (
+        typeof data.activeGroup !== 'number' ||
+        data.activeGroup < 0 ||
+        data.activeGroup >= data.groups.length
+    ) {
+        data.activeGroup = 0;
+    }
 
-while (state.groups.length < MAX_GROUPS) {
-    state.groups.push(emptyGroup());
+    data.groups.forEach(group => {
+        if (!Array.isArray(group.team1)) group.team1 = [];
+        if (!Array.isArray(group.team2)) group.team2 = [];
+        if (typeof group.time !== 'string') group.time = '';
+    });
+
+    return data;
 }
 
+function loadInitialState() {
+    // Firebase 未設定時，保留原本 localStorage 功能方便測試
+    if (!firebaseEnabled) {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+            state = normalizeState(saved);
+        } catch (e) {
+            state = normalizeState(null);
+        }
+        return;
+    }
 
-/* =========================================================
-   確保目前團索引正確
-========================================================= */
+    // 即時監聽：任何人修改後，所有開啟網站的人都會同步更新
+    database.ref(FIREBASE_PATH).on('value', snapshot => {
+        const data = snapshot.val();
 
-if (
-    typeof state.activeGroup !== 'number' ||
-    state.activeGroup < 0 ||
-    state.activeGroup >= state.groups.length
-) {
-    state.activeGroup = 0;
+        if (data) {
+            isRemoteUpdate = true;
+            state = normalizeState(data);
+            render();
+            isRemoteUpdate = false;
+        } else {
+            database.ref(FIREBASE_PATH).set(state);
+        }
+    }, error => {
+        console.error('Firebase 同步失敗：', error);
+        alert('無法同步共用資料，請確認 Firebase Database 設定。');
+    });
 }
-
 
 /* =========================================================
    取得目前團
@@ -248,10 +290,20 @@ function currentGroup() {
 ========================================================= */
 
 function saveState() {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state)
-    );
+    if (isRemoteUpdate) return;
+
+    if (firebaseEnabled) {
+        database.ref(FIREBASE_PATH).set(state)
+            .catch(error => {
+                console.error('儲存失敗：', error);
+                alert('共用資料儲存失敗，請確認 Firebase 設定。');
+            });
+    } else {
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(state)
+        );
+    }
 
     render();
 }
@@ -344,10 +396,7 @@ function updateGroupTime(index, time) {
 
     state.groups[index].time = time;
 
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state)
-    );
+    saveState();
 }
 
 
@@ -830,6 +879,7 @@ function render() {
 ========================================================= */
 
 render();
+loadInitialState();
 
 </script>
 
