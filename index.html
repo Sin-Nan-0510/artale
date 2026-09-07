@@ -48,14 +48,14 @@
                     <span>📋</span> 快速貼上與匯入
                 </h2>
                 <p class="text-xs text-slate-400 mb-3">
-                    請直接貼上格式化名單（支援多行，格式範例：<br>
-                    <code class="text-emerald-300">XX 黑騎士</code> 或直接每行一個名字）。
+                    請直接貼上格式化名單（支援多行，例如：<br>
+                    <code class="text-emerald-300">195 冰雷 小夜 左上</code>）。
                     <br><span class="text-amber-400">名單會加入目前選取的團。</span>
                 </p>
 
-                <textarea id="paste-input" rows="7"
-                    class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 mb-3 resize-none"
-                    placeholder="例如：&#10;小明 黑騎士&#10;小華 英雄&#10;小強 祭司"></textarea>
+                <textarea id="paste-input" rows="8"
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 mb-3 resize-none font-mono"
+                    placeholder="195 冰雷 小夜 左上&#10;169 聖騎 琉雲 左上&#10;166 刀賊 歐巴 左中"></textarea>
 
                 <button onclick="handleBatchImport()"
                     class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-md">
@@ -76,10 +76,10 @@
 
                 <div class="mt-6 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-1">
                     <p class="font-semibold text-slate-300">💡 操作提示：</p>
-                    <p>1. 先選擇團數與目前團。</p>
-                    <p>2. 貼上文字後加入目前團。</p>
-                    <p>3. 候選名單可直接指定到第一隊／第二隊。</p>
-                    <p>4. 資料會自動儲存於瀏覽器（重新整理不消失）。</p>
+                    <p>1. 先選擇目前的團。</p>
+                    <p>2. 直接貼上包含等級、職業、名字、位置的名單。</p>
+                    <p>3. 點擊候選名單中的 1隊／2隊 快速配置位置。</p>
+                    <p>4. 資料會自動存於瀏覽器，重新整理不消失。</p>
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'artale_ryuou_groups_state_v2';
+const STORAGE_KEY = 'artale_ryuou_groups_state_v3';
 
 function emptyGroup() {
     return { pool: [], team1: [], team2: [] };
@@ -147,6 +147,7 @@ function selectGroup(index) {
     saveState();
 }
 
+// 智慧解析：支援等級、職業、名字、位置（如：195 冰雷 小夜 左上）
 function handleBatchImport() {
     const input = document.getElementById('paste-input');
     const text = input.value.trim();
@@ -160,13 +161,54 @@ function handleBatchImport() {
         if (!line) return;
 
         const parts = line.split(/\s+/);
-        const name = parts[0];
-        const job = parts.slice(1).join(' ') || '未填職業';
+        if (parts.length === 0) return;
+
+        let name = '';
+        let job = '';
+        let position = '';
+
+        if (parts.length === 1) {
+            name = parts[0];
+            job = '未填';
+        } else if (parts.length === 2) {
+            // 例如：小夜 冰雷
+            name = parts[1];
+            job = parts[0];
+        } else if (parts.length === 3) {
+            // 例如：冰雷 小夜 左上  或  195 冰雷 小夜
+            if (!isNaN(parts[0])) {
+                // 有包含等級 (等級 職業 名字)
+                job = parts[1];
+                name = parts[2];
+            } else {
+                // (職業 名字 位置)
+                job = parts[0];
+                name = parts[1];
+                position = parts[2];
+            }
+        } else {
+            // 長度 >= 4（例如：195 冰雷 小夜 左上）
+            if (!isNaN(parts[0])) {
+                job = parts[1];
+                name = parts[2];
+                position = parts.slice(3).join(' ');
+            } else {
+                job = parts[0];
+                name = parts[1];
+                position = parts.slice(2).join(' ');
+            }
+        }
+
+        // 組合顯示名稱與職業/標籤
+        let displayJob = job;
+        if (position) {
+            displayJob = `${job} (${position})`;
+        }
 
         const exists = allMembers.some(p => p.name === name);
         if (!exists) {
-            group.pool.push({ name, job });
-            allMembers.push({ name, job });
+            group.pool.push({ name, job: displayJob });
+            allMembers.push({ name, job: displayJob });
         }
     });
 
@@ -225,12 +267,12 @@ function memberCard(p, index, teamName) {
 
     return `
         <div class="bg-slate-900/80 border border-${color}-500/30 rounded-lg p-3 flex justify-between items-center shadow">
-            <div class="min-w-0">
-                <span class="text-xs text-${color}-400 font-bold mr-2">#${index + 1}</span>
+            <div class="min-w-0 pr-2">
+                <span class="text-xs text-${color}-400 font-bold mr-1.5">#${index + 1}</span>
                 <span class="font-bold text-slate-100">${escapeHtml(p.name)}</span>
-                <span class="text-xs text-slate-400 ml-1.5 bg-slate-800 px-1.5 py-0.5 rounded">${escapeHtml(p.job)}</span>
+                <span class="text-xs text-slate-300 ml-1.5 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">${escapeHtml(p.job)}</span>
             </div>
-            <div class="flex gap-1 ml-2 shrink-0">
+            <div class="flex gap-1 shrink-0">
                 <button onclick="moveTo(${index}, '${teamName}', '${target}')"
                     title="${title}" class="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-slate-300">${arrow}</button>
                 <button onclick="moveTo(${index}, '${teamName}', 'pool')"
@@ -287,7 +329,7 @@ function renderPool() {
                 <div class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 flex items-center gap-2 text-sm shadow">
                     <div>
                         <span class="font-semibold text-slate-200">${escapeHtml(p.name)}</span>
-                        <span class="text-xs text-slate-400 ml-1 bg-slate-800 px-1.5 py-0.5 rounded">${escapeHtml(p.job)}</span>
+                        <span class="text-xs text-slate-300 ml-1 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">${escapeHtml(p.job)}</span>
                     </div>
                     <div class="flex gap-1 ml-2">
                         <button onclick="moveTo(${index}, 'pool', 'team1')"
@@ -323,7 +365,7 @@ function render() {
         <button onclick="selectGroup(${i})"
             class="px-4 py-2 rounded-lg font-semibold text-sm transition
             ${i === state.activeGroup
-                ? 'bg-amber-500 text-slate-950'
+                ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700'}">
             第 ${i + 1} 團
         </button>
@@ -331,7 +373,7 @@ function render() {
 
     const area = document.getElementById('teams-area');
     area.innerHTML =
-        renderTeam('team1', '第一隊', '🛡️', 'sky') +
+        renderTeam('team1', '第一隊', '⚔️', 'sky') +
         renderTeam('team2', '第二隊', '⚔️', 'rose') +
         renderPool();
 }
