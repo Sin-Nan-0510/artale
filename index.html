@@ -16,7 +16,7 @@
 
         body {
             font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-            background-color: #0f172a; /* 沉穩深藍色底色 */
+            background-color: #0f172a;
             color: #f8fafc;
         }
 
@@ -45,228 +45,76 @@
         }
 
         /* =====================================================
-           分享圖片產生區 (極簡藍色基調)
+           分享圖片產生區 (緊湊排版、完整顯示名字、位置靠左對齊)
         ====================================================== */
 
         #share-card {
             position: fixed;
             left: -100000px;
             top: 0;
-            width: 1500px;
+            width: 580px;
             pointer-events: none;
         }
 
         .share-card-inner {
-            width: 1500px;
-            padding: 70px;
-            background: #0f172a;
-            color: #f8fafc;
+            width: 580px;
+            padding: 24px 28px;
+            background: #111111;
+            color: #d1d5db;
+            font-family: "Microsoft JhengHei", sans-serif;
         }
 
-        .share-title {
-            text-align: center;
-            margin-bottom: 50px;
+        .share-group-header-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #f3f4f6;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
 
-        .share-title-main {
-            font-size: 56px;
-            line-height: 1;
-            font-weight: 800;
-            letter-spacing: 6px;
-            color: #60a5fa;
-        }
-
-        .share-title-sub {
+        .share-team-title-text {
+            font-size: 21px;
+            font-weight: 700;
+            color: #93c5fd;
             margin-top: 14px;
-            font-size: 24px;
-            font-weight: 500;
-            color: #94a3b8;
+            margin-bottom: 6px;
         }
 
-        .share-group {
-            margin-bottom: 40px;
-            overflow: hidden;
-            border: 1px solid #1e293b;
-            border-radius: 16px;
-            background: #1e293b;
-        }
-
-        .share-group-header {
+        .share-row-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 24px 32px;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
+            font-size: 22px; /* 字體再微調放大 */
+            line-height: 1.55;
+            color: #e5e7eb;
+            margin-bottom: 4px;
         }
 
-        .share-group-title {
-            font-size: 30px;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .share-group-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 18px;
-            font-weight: 500;
-            color: #94a3b8;
-        }
-
-        .share-group-count {
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(96, 165, 250, 0.1);
-            color: #60a5fa;
+        .share-col-level {
+            width: 55px;
+            text-align: right;
+            margin-right: 18px;
+            color: #93c5fd;
             font-weight: 600;
+            flex-shrink: 0;
         }
 
-        .share-teams {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            padding: 24px;
-            background: #0f172a;
+        .share-col-job {
+            width: 80px;
+            margin-right: 16px;
+            flex-shrink: 0;
         }
 
-        .share-team {
-            overflow: hidden;
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            background: #1e293b;
+        .share-col-name {
+            width: 200px; /* 給名字充足的寬度，完整呈現括號與文字 */
+            margin-right: 16px;
+            flex-shrink: 0;
+            word-break: break-all;
         }
 
-        .share-team-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 24px;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
-        }
-
-        .share-team-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .share-team-count {
-            font-size: 16px;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-
-        .share-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .share-table th {
-            padding: 12px;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
-            color: #94a3b8;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: left;
-        }
-
-        .share-table td {
-            height: 70px;
-            padding: 10px 12px;
-            border-bottom: 1px solid #1e293b;
-            font-size: 18px;
-            font-weight: 500;
-            vertical-align: middle;
-        }
-
-        .share-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .share-table .col-number {
-            width: 50px;
-            text-align: center;
-        }
-
-        .share-table .col-level {
-            width: 110px;
-            white-space: nowrap;
-        }
-
-        .share-table .col-name {
-            width: 180px;
-        }
-
-        .share-table .col-job {
-            width: 140px;
-        }
-
-        .share-table .col-position {
-            width: auto;
-        }
-
-        .share-number {
-            width: 30px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            background: #0f172a;
-            color: #94a3b8;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .share-level-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 10px;
-            border-radius: 6px;
-            background: rgba(96, 165, 250, 0.1);
-            color: #60a5fa;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .share-level-missing {
-            color: #64748b;
-            font-size: 15px;
-        }
-
-        .share-name {
-            color: #f8fafc;
-            font-weight: 600;
-        }
-
-        .share-job {
+        .share-col-position {
+            flex: 1;
+            text-align: left; /* 位置改為靠左，緊接在名字後面 */
             color: #cbd5e1;
-        }
-
-        .share-position {
-            color: #94a3b8;
-        }
-
-        .share-empty-row td {
-            color: #475569;
-            font-style: italic;
-            text-align: center;
-        }
-
-        .share-footer {
-            margin-top: 20px;
-            padding-top: 24px;
-            border-top: 1px solid #1e293b;
-            text-align: center;
-            color: #64748b;
-            font-size: 16px;
-            font-weight: 500;
         }
     </style>
 </head>
@@ -386,7 +234,7 @@
 
 
     <!-- =========================================================
-         團隊圖片產生區
+         圖片產生暫存區
     ========================================================== -->
 
     <div id="share-card"></div>
@@ -416,7 +264,7 @@
         };
 
         const FIREBASE_PATH = "artale_ryuou_shared_state";
-        const STORAGE_KEY = "artale_ryuou_groups_state_v6";
+        const STORAGE_KEY = "artale_ryuou_groups_state_v8";
 
         const MAX_GROUPS = 5;
         const MAX_TEAM_SIZE = 6;
@@ -861,82 +709,23 @@
             return html;
         }
 
-        function createShareRows(members) {
-            let html = "";
-            for (let i = 0; i < MAX_TEAM_SIZE; i++) {
-                if (i < members.length) {
-                    const player = normalizePlayer(members[i]);
-                    const level = getPlayerLevel(player);
-                    html += `
-                        <tr>
-                            <td class="col-number"><span class="share-number">${i + 1}</span></td>
-                            <td class="col-level">
-                                ${level ? `<span class="share-level-badge">Lv.${escapeHtml(level)}</span>` : `<span class="share-level-missing">未設定</span>`}
-                            </td>
-                            <td class="col-name"><span class="share-name">${escapeHtml(player.name)}</span></td>
-                            <td class="col-job"><span class="share-job">${escapeHtml(player.job)}</span></td>
-                            <td class="col-position"><span class="share-position">${player.position ? escapeHtml(player.position) : "-"}</span></td>
-                        </tr>
-                    `;
-                } else {
-                    html += `
-                        <tr class="share-empty-row">
-                            <td class="col-number">-</td>
-                            <td colspan="4">空位</td>
-                        </tr>
-                    `;
-                }
-            }
-            return html;
-        }
+        // =========================================================
+        // 圖片排版：欄位寬度最佳化與左側對齊
+        // =========================================================
+        function formatShareLine(player) {
+            const level = getPlayerLevel(player);
+            const levelStr = level ? level : "---";
+            const jobStr = player.job || "未填";
+            const nameStr = player.name || "";
+            const positionStr = player.position || "";
 
-        function createShareTeam(group, teamName, title, emoji) {
-            const members = group[teamName];
             return `
-                <div class="share-team">
-                    <div class="share-team-header">
-                        <div class="share-team-title">${emoji} ${title}</div>
-                        <div class="share-team-count">${members.length} / 6</div>
-                    </div>
-                    <table class="share-table">
-                        <thead>
-                            <tr>
-                                <th class="col-number">#</th>
-                                <th class="col-level">等級</th>
-                                <th class="col-name">名稱</th>
-                                <th class="col-job">職業</th>
-                                <th class="col-position">位置</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${createShareRows(members)}
-                        </tbody>
-                    </table>
+                <div class="share-row-item">
+                    <div class="share-col-level">${escapeHtml(levelStr)}</div>
+                    <div class="share-col-job">${escapeHtml(jobStr)}</div>
+                    <div class="share-col-name">${escapeHtml(nameStr)}</div>
+                    <div class="share-col-position">${escapeHtml(positionStr)}</div>
                 </div>
-            `;
-        }
-
-        function createShareGroup(group, groupIndex) {
-            const weekday = getWeekday(group.date);
-            const dateText = group.date ? `${group.date}${weekday ? `（星期${weekday}）` : ""}` : "日期未設定";
-            const timeText = group.time || "時間未設定";
-            const total = group.team1.length + group.team2.length;
-
-            return `
-                <section class="share-group">
-                    <div class="share-group-header">
-                        <div class="share-group-title">第 ${groupIndex + 1} 團</div>
-                        <div class="share-group-info">
-                            <span>📅 ${escapeHtml(dateText)}</span>
-                            <span>🕒 ${escapeHtml(timeText)}</span>
-                            <span class="share-group-count">👥 ${total} 人</span>
-                        </div>
-                    </div>
-                    <div class="share-teams">
-                        ${createShareTeam(group, "team1", "第一隊", "⚔️")}
-                        ${createShareTeam(group, "team2", "第二隊", "⚔️")}
-                    </div>
-                </section>
             `;
         }
 
@@ -947,56 +736,79 @@
             }
 
             const shareCard = document.getElementById("share-card");
-            const activeGroups = state.groups
-                .map((group, index) => ({ group, originalIndex: index }))
-                .filter(item => item.group.team1.length > 0 || item.group.team2.length > 0);
+            
+            const activeGroups = [];
+            state.groups.forEach((group, groupIndex) => {
+                const hasTeam1 = group.team1 && group.team1.length > 0;
+                const hasTeam2 = group.team2 && group.team2.length > 0;
+                if (hasTeam1 || hasTeam2) {
+                    activeGroups.push({ groupIndex, group });
+                }
+            });
 
             if (activeGroups.length === 0) {
                 alert("目前所有團隊都沒有成員，沒有可產生的圖片。");
                 return;
             }
 
-            let totalPlayers = 0;
-            activeGroups.forEach(item => {
-                totalPlayers += item.group.team1.length + item.group.team2.length;
-            });
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
 
-            shareCard.innerHTML = `
-                <div class="share-card-inner">
-                    <div class="share-title">
-                        <div class="share-title-main">ARTALE</div>
-                        <div class="share-title-sub">遠征隊伍分配 ・ ${activeGroups.length} 團 ・ ${totalPlayers} 人</div>
+            for (let i = 0; i < activeGroups.length; i++) {
+                const { groupIndex, group } = activeGroups[i];
+                const weekday = getWeekday(group.date);
+                const dateText = group.date ? `${group.date}${weekday ? `（${weekday}）` : ""}` : "";
+                const timeText = group.time || "";
+                
+                const headerInfo = [dateText, timeText, `第${groupIndex + 1}團`].filter(Boolean).join(" ");
+
+                let contentHtml = `<div class="share-group-header-text">${escapeHtml(headerInfo)}</div>`;
+
+                if (group.team1 && group.team1.length > 0) {
+                    contentHtml += `<div class="share-team-title-text">⚔️ 第一隊 (${group.team1.length}人)</div>`;
+                    group.team1.forEach(player => {
+                        contentHtml += formatShareLine(player);
+                    });
+                }
+
+                if (group.team2 && group.team2.length > 0) {
+                    contentHtml += `<div class="share-team-title-text">⚔️ 第二隊 (${group.team2.length}人)</div>`;
+                    group.team2.forEach(player => {
+                        contentHtml += formatShareLine(player);
+                    });
+                }
+
+                shareCard.innerHTML = `
+                    <div class="share-card-inner">
+                        ${contentHtml}
                     </div>
-                    ${activeGroups.map(item => createShareGroup(item.group, item.originalIndex)).join("")}
-                    <div class="share-footer">Artale 隊伍分配 ・ 全部團隊名單</div>
-                </div>
-            `;
+                `;
 
-            try {
-                await new Promise(resolve => requestAnimationFrame(resolve));
-                const canvas = await html2canvas(shareCard.firstElementChild, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#0f172a",
-                    logging: false,
-                    imageTimeout: 0
-                });
+                try {
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    const canvas = await html2canvas(shareCard.firstElementChild, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: "#111111",
+                        logging: false,
+                        imageTimeout: 0
+                    });
 
-                const link = document.createElement("a");
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, "0");
-                const day = String(today.getDate()).padStart(2, "0");
+                    const link = document.createElement("a");
+                    link.download = `Artale_第${groupIndex + 1}團_${year}-${month}-${day}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
 
-                link.download = `Artale_全部團隊_${year}-${month}-${day}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            } catch (error) {
-                console.error("產生全部團隊圖片失敗：", error);
-                alert("產生圖片失敗，請稍後再試。");
-            } finally {
-                shareCard.innerHTML = "";
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                } catch (error) {
+                    console.error("產生團隊圖片失敗：", error);
+                }
             }
+
+            shareCard.innerHTML = "";
+            alert(`已成功產生並下載 ${activeGroups.length} 張團隊圖片！`);
         }
 
         function render() {
