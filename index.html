@@ -45,7 +45,7 @@
         }
 
         /* =====================================================
-           分享圖片產生區 (緊湊排版、完整顯示名字、位置靠左對齊)
+           分享圖片產生區
         ====================================================== */
 
         #share-card {
@@ -83,7 +83,7 @@
         .share-row-item {
             display: flex;
             align-items: center;
-            font-size: 22px; /* 字體再微調放大 */
+            font-size: 22px;
             line-height: 1.55;
             color: #e5e7eb;
             margin-bottom: 4px;
@@ -105,7 +105,7 @@
         }
 
         .share-col-name {
-            width: 200px; /* 給名字充足的寬度，完整呈現括號與文字 */
+            width: 200px;
             margin-right: 16px;
             flex-shrink: 0;
             word-break: break-all;
@@ -113,7 +113,7 @@
 
         .share-col-position {
             flex: 1;
-            text-align: left; /* 位置改為靠左，緊接在名字後面 */
+            text-align: left;
             color: #cbd5e1;
         }
     </style>
@@ -123,10 +123,7 @@
 
     <div class="mx-auto max-w-7xl">
 
-        <!-- =====================================================
-             標題
-        ====================================================== -->
-
+        <!-- Header -->
         <header class="mb-8 text-center">
             <h1 class="mb-2 text-3xl font-bold tracking-wide text-blue-400 md:text-4xl">
                 Artale 隊伍分配
@@ -134,13 +131,8 @@
             <p id="summary" class="hidden"></p>
         </header>
 
-
-        <!-- =====================================================
-             團數控制
-        ====================================================== -->
-
+        <!-- 團數控制 -->
         <div class="mb-6 rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
-
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-bold text-slate-200">
@@ -149,110 +141,60 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button
-                        onclick="removeGroup()"
-                        class="rounded-lg border border-slate-700 bg-slate-800 px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700">
+                    <button onclick="removeGroup()" class="rounded-lg border border-slate-700 bg-slate-800 px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700">
                         減少一團
                     </button>
-
-                    <span
-                        id="group-count"
-                        class="min-w-16 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-center text-sm font-semibold text-slate-300">
+                    <span id="group-count" class="min-w-16 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-center text-sm font-semibold text-slate-300">
                         5 / 5
                     </span>
-
-                    <button
-                        onclick="addGroup()"
-                        class="rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-blue-500">
+                    <button onclick="addGroup()" class="rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-blue-500">
                         新增一團
                     </button>
                 </div>
             </div>
 
             <div id="group-tabs" class="mt-4 flex flex-wrap gap-3"></div>
-
         </div>
 
-
-        <!-- =====================================================
-             主內容
-        ====================================================== -->
-
+        <!-- 主內容區 -->
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-
-            <!-- 左側：隊伍 -->
             <div id="teams-area" class="space-y-6 lg:col-span-2"></div>
 
-            <!-- 右側：控制 -->
             <div class="space-y-6">
                 <div class="sticky top-6 rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
-
                     <h2 class="mb-3 text-base font-bold text-slate-200">
                         快速貼上與匯入
                     </h2>
-
                     <div class="mb-3 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-center font-mono text-xs font-medium tracking-wide text-slate-400">
                         等級 職業 名字 位置
                     </div>
-
-                    <textarea
-                        id="paste-input"
-                        rows="7"
-                        class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
-                        placeholder="等級 職業 名字 位置"></textarea>
-
-                    <button
-                        onclick="handleBatchImport()"
-                        class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500">
+                    <textarea id="paste-input" rows="7" class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="等級 職業 名字 位置"></textarea>
+                    <button onclick="handleBatchImport()" class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500">
                         加入共用待分配名單
                     </button>
-
                     <hr class="my-5 border-slate-800">
-
-                    <button
-                        onclick="generateAllTeamsImage()"
-                        class="w-full rounded-lg border border-blue-900 bg-blue-950/50 px-4 py-3 text-sm font-bold text-blue-300 transition hover:bg-blue-900/50">
+                    <button onclick="generateAllTeamsImage()" class="w-full rounded-lg border border-blue-900 bg-blue-950/50 px-4 py-3 text-sm font-bold text-blue-300 transition hover:bg-blue-900/50">
                         產生全部團隊圖片
                     </button>
-
-                    <button
-                        onclick="clearCurrentGroup()"
-                        class="mt-4 w-full rounded-lg border border-slate-800 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-700">
+                    <button onclick="clearCurrentGroup()" class="mt-4 w-full rounded-lg border border-slate-800 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-700">
                         清空目前團
                     </button>
-
-                    <button
-                        onclick="clearAllData()"
-                        class="mt-2.5 w-full rounded-lg border border-slate-800 bg-slate-800 px-4 py-2.5 text-sm font-medium text-rose-400 transition hover:bg-slate-700">
+                    <button onclick="clearAllData()" class="mt-2.5 w-full rounded-lg border border-slate-800 bg-slate-800 px-4 py-2.5 text-sm font-medium text-rose-400 transition hover:bg-slate-700">
                         清空全部
                     </button>
-
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- =========================================================
-         圖片產生暫存區
-    ========================================================== -->
-
+    <!-- 圖片暫存區 -->
     <div id="share-card"></div>
 
-
-    <!-- =========================================================
-         Firebase
-    ========================================================== -->
-
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 
     <script>
-
-        /* =========================================================
-           Firebase 設定
-        ========================================================== */
-
         const firebaseConfig = {
             apiKey: "AIzaSyCb4unyxOqVMPA8ZPB7GOp6ugqdXz3p0JM",
             authDomain: "artale-21938.firebaseapp.com",
@@ -265,18 +207,12 @@
 
         const FIREBASE_PATH = "artale_ryuou_shared_state";
         const STORAGE_KEY = "artale_ryuou_groups_state_v8";
-
         const MAX_GROUPS = 5;
         const MAX_TEAM_SIZE = 6;
 
         let database = null;
         let firebaseEnabled = false;
         let isRemoteUpdate = false;
-
-
-        /* =========================================================
-           Firebase 初始化
-        ========================================================== */
 
         try {
             if (firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith("請填入")) {
@@ -378,12 +314,11 @@
             return state.groups[state.activeGroup];
         }
 
-        function saveState() {
+        function saveState(skipRender = false) {
             if (isRemoteUpdate) return;
             if (firebaseEnabled) {
                 database.ref(FIREBASE_PATH).set(state).catch(error => {
                     console.error("Firebase 儲存失敗：", error);
-                    alert("共用資料儲存失敗，請確認 Firebase Database 設定。");
                 });
             } else {
                 try {
@@ -392,7 +327,9 @@
                     console.error("LocalStorage 儲存失敗：", error);
                 }
             }
-            render();
+            if (!skipRender) {
+                render();
+            }
         }
 
         function loadInitialState() {
@@ -460,28 +397,14 @@
 
         function updateGroupTime(index, time) {
             if (!state.groups[index]) return;
-            time = time.trim();
-            const match = time.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
-            if (time !== "" && !match) {
-                alert("時間格式請輸入 HH:MM，例如 19:30");
-                render();
-                return;
-            }
-            state.groups[index].time = time;
-            saveState();
+            state.groups[index].time = time.trim();
+            saveState(true);
         }
 
         function updateGroupDate(index, date) {
             if (!state.groups[index]) return;
-            date = date.trim();
-            const match = date.match(/^(\d{1,2})\/(\d{1,2})$/);
-            if (date !== "" && !match) {
-                alert("日期格式請輸入 M/D，例如 9/8");
-                render();
-                return;
-            }
-            state.groups[index].date = date;
-            saveState();
+            state.groups[index].date = date.trim();
+            saveState(true);
         }
 
         function getWeekday(date) {
@@ -496,20 +419,26 @@
             return weekdays[d.getDay()];
         }
 
-        // 更新玩家等級（支援 pool, team1, team2）
-        function updatePlayerLevel(targetType, index, newLevel) {
-            const levelVal = normalizeLevel(newLevel);
+        /* 即時更新玩家所有欄位（等級、名字、職業、位置）並直接寫入 State */
+        function updatePlayerField(targetType, index, field, value) {
+            let player = null;
             if (targetType === "pool") {
-                if (state.pool[index]) {
-                    state.pool[index].level = levelVal;
-                }
+                player = state.pool[index];
             } else if (targetType === "team1" || targetType === "team2") {
                 const group = currentGroup();
-                if (group && group[targetType][index]) {
-                    group[targetType][index].level = levelVal;
-                }
+                if (group) player = group[targetType][index];
             }
-            saveState();
+
+            if (!player) return;
+
+            if (field === "level") {
+                player.level = normalizeLevel(value);
+            } else {
+                player[field] = String(value || "");
+            }
+
+            // 寫入資料庫，skipRender=true 避免輸入到一半畫面重繪導致游標跑掉
+            saveState(true);
         }
 
         function handleBatchImport() {
@@ -631,11 +560,13 @@
             const level = getPlayerLevel(player);
 
             return `
-                <div class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950 p-3 transition hover:border-slate-700">
-                    <div class="min-w-0 pr-2">
-                        <div class="flex flex-wrap items-center gap-1.5">
+                <div class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950 p-2.5 transition hover:border-slate-700">
+                    <div class="min-w-0 pr-1 flex-1">
+                        <div class="flex items-center gap-1 flex-wrap">
                             <span class="text-xs font-semibold text-slate-500">#${index + 1}</span>
-                            <div class="flex items-center gap-1">
+                            
+                            <!-- 等級輸入框 -->
+                            <div class="flex items-center">
                                 <span class="text-xs text-slate-500">Lv.</span>
                                 <input
                                     type="text"
@@ -643,16 +574,40 @@
                                     placeholder="-"
                                     maxlength="3"
                                     inputmode="numeric"
-                                    onchange="updatePlayerLevel('${teamName}', ${index}, this.value)"
-                                    class="w-12 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
-                                    title="直接修改等級">
+                                    oninput="updatePlayerField('${teamName}', ${index}, 'level', this.value)"
+                                    class="w-8 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改等級">
                             </div>
-                            <span class="font-semibold text-slate-200">${escapeHtml(player.name)}</span>
-                            <span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(player.job)}</span>
-                            ${player.position ? `<span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-500">${escapeHtml(player.position)}</span>` : ""}
+
+                            <!-- 名字輸入框 -->
+                            <input
+                                type="text"
+                                value="${escapeHtml(player.name)}"
+                                placeholder="名字"
+                                oninput="updatePlayerField('${teamName}', ${index}, 'name', this.value)"
+                                class="w-24 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
+                                title="點擊修改名字">
+
+                            <!-- 職業輸入框 -->
+                            <input
+                                type="text"
+                                value="${escapeHtml(player.job)}"
+                                placeholder="職業"
+                                oninput="updatePlayerField('${teamName}', ${index}, 'job', this.value)"
+                                class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-400 focus:border-blue-500 focus:outline-none"
+                                title="點擊修改職業">
+
+                            <!-- 位置輸入框 -->
+                            <input
+                                type="text"
+                                value="${escapeHtml(player.position)}"
+                                placeholder="位置"
+                                oninput="updatePlayerField('${teamName}', ${index}, 'position', this.value)"
+                                class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-500 focus:border-blue-500 focus:outline-none"
+                                title="點擊修改位置">
                         </div>
                     </div>
-                    <div class="flex shrink-0 gap-1">
+                    <div class="flex shrink-0 gap-1 ml-1">
                         <button onclick="moveTo(${index}, '${teamName}', '${target}')" title="${title}" class="rounded bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-slate-300 hover:bg-slate-800">${arrow}</button>
                         <button onclick="moveTo(${index}, '${teamName}', 'pool')" title="退回待分配" class="rounded bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-rose-400 hover:bg-rose-950">✕</button>
                     </div>
@@ -716,25 +671,41 @@
                 state.pool.forEach((player, index) => {
                     const level = getPlayerLevel(player);
                     html += `
-                        <div class="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm">
-                            <div class="flex items-center gap-1.5">
-                                <div class="flex items-center gap-1">
-                                    <span class="text-xs text-slate-500">Lv.</span>
-                                    <input
-                                        type="text"
-                                        value="${escapeHtml(level)}"
-                                        placeholder="-"
-                                        maxlength="3"
-                                        inputmode="numeric"
-                                        onchange="updatePlayerLevel('pool', ${index}, this.value)"
-                                        class="w-12 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
-                                        title="直接修改等級">
-                                </div>
-                                <span class="font-medium text-slate-200">${escapeHtml(player.name)}</span>
-                                <span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(player.job)}</span>
-                                ${player.position ? `<span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-500">${escapeHtml(player.position)}</span>` : ""}
+                        <div class="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950 px-2.5 py-2 text-sm">
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-slate-500">Lv.</span>
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(level)}"
+                                    placeholder="-"
+                                    maxlength="3"
+                                    inputmode="numeric"
+                                    oninput="updatePlayerField('pool', ${index}, 'level', this.value)"
+                                    class="w-8 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改等級">
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(player.name)}"
+                                    placeholder="名字"
+                                    oninput="updatePlayerField('pool', ${index}, 'name', this.value)"
+                                    class="w-20 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改名字">
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(player.job)}"
+                                    placeholder="職業"
+                                    oninput="updatePlayerField('pool', ${index}, 'job', this.value)"
+                                    class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-400 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改職業">
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(player.position)}"
+                                    placeholder="位置"
+                                    oninput="updatePlayerField('pool', ${index}, 'position', this.value)"
+                                    class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-500 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改位置">
                             </div>
-                            <div class="flex gap-1">
+                            <div class="flex gap-1 ml-1">
                                 <button onclick="moveTo(${index}, 'pool', 'team1')" class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-300 hover:bg-slate-800">1隊</button>
                                 <button onclick="moveTo(${index}, 'pool', 'team2')" class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-300 hover:bg-slate-800">2隊</button>
                             </div>
@@ -747,9 +718,6 @@
             return html;
         }
 
-        // =========================================================
-        // 圖片排版：欄位寬度最佳化與左側對齊
-        // =========================================================
         function formatShareLine(player) {
             const level = getPlayerLevel(player);
             const levelStr = level ? level : "---";
@@ -875,7 +843,7 @@
                             placeholder="19:30"
                             maxlength="5"
                             inputmode="numeric"
-                            onchange="updateGroupTime(${index}, this.value)"
+                            oninput="updateGroupTime(${index}, this.value)"
                             class="w-24 rounded border border-slate-800 bg-slate-900 px-2 py-1 text-center text-xs text-slate-200 focus:border-blue-500 focus:outline-none"
                             title="設定時間">
                         <div class="flex items-center gap-1">
@@ -885,7 +853,7 @@
                                 placeholder="9/8"
                                 maxlength="5"
                                 inputmode="numeric"
-                                onchange="updateGroupDate(${index}, this.value)"
+                                oninput="updateGroupDate(${index}, this.value)"
                                 class="w-24 rounded border border-slate-800 bg-slate-900 px-2 py-1 text-center text-xs text-slate-200 focus:border-blue-500 focus:outline-none"
                                 title="設定日期">
                             ${weekday ? `<span class="text-xs font-medium text-blue-400">(${weekday})</span>` : ""}
