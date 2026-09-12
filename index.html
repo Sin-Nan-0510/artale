@@ -496,6 +496,22 @@
             return weekdays[d.getDay()];
         }
 
+        // 更新玩家等級（支援 pool, team1, team2）
+        function updatePlayerLevel(targetType, index, newLevel) {
+            const levelVal = normalizeLevel(newLevel);
+            if (targetType === "pool") {
+                if (state.pool[index]) {
+                    state.pool[index].level = levelVal;
+                }
+            } else if (targetType === "team1" || targetType === "team2") {
+                const group = currentGroup();
+                if (group && group[targetType][index]) {
+                    group[targetType][index].level = levelVal;
+                }
+            }
+            saveState();
+        }
+
         function handleBatchImport() {
             const input = document.getElementById("paste-input");
             const text = input.value.trim();
@@ -619,7 +635,18 @@
                     <div class="min-w-0 pr-2">
                         <div class="flex flex-wrap items-center gap-1.5">
                             <span class="text-xs font-semibold text-slate-500">#${index + 1}</span>
-                            ${level ? `<span class="rounded bg-blue-950 px-1.5 py-0.5 text-xs font-semibold text-blue-400">Lv.${escapeHtml(level)}</span>` : ""}
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-slate-500">Lv.</span>
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(level)}"
+                                    placeholder="-"
+                                    maxlength="3"
+                                    inputmode="numeric"
+                                    onchange="updatePlayerLevel('${teamName}', ${index}, this.value)"
+                                    class="w-12 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
+                                    title="直接修改等級">
+                            </div>
                             <span class="font-semibold text-slate-200">${escapeHtml(player.name)}</span>
                             <span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(player.job)}</span>
                             ${player.position ? `<span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-500">${escapeHtml(player.position)}</span>` : ""}
@@ -690,13 +717,24 @@
                     const level = getPlayerLevel(player);
                     html += `
                         <div class="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm">
-                            <div>
-                                ${level ? `<span class="mr-1 text-xs font-semibold text-blue-400">Lv.${escapeHtml(level)}</span>` : ""}
+                            <div class="flex items-center gap-1.5">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs text-slate-500">Lv.</span>
+                                    <input
+                                        type="text"
+                                        value="${escapeHtml(level)}"
+                                        placeholder="-"
+                                        maxlength="3"
+                                        inputmode="numeric"
+                                        onchange="updatePlayerLevel('pool', ${index}, this.value)"
+                                        class="w-12 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
+                                        title="直接修改等級">
+                                </div>
                                 <span class="font-medium text-slate-200">${escapeHtml(player.name)}</span>
-                                <span class="ml-1 rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(player.job)}</span>
-                                ${player.position ? `<span class="ml-1 rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-500">${escapeHtml(player.position)}</span>` : ""}
+                                <span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(player.job)}</span>
+                                ${player.position ? `<span class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-500">${escapeHtml(player.position)}</span>` : ""}
                             </div>
-                            <div class="ml-2 flex gap-1">
+                            <div class="flex gap-1">
                                 <button onclick="moveTo(${index}, 'pool', 'team1')" class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-300 hover:bg-slate-800">1隊</button>
                                 <button onclick="moveTo(${index}, 'pool', 'team2')" class="rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-slate-300 hover:bg-slate-800">2隊</button>
                             </div>
