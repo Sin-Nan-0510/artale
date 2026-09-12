@@ -190,6 +190,9 @@
                     <button onclick="handleBatchImport()" class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500">
                         加入共用待分配名單
                     </button>
+                    <!-- 匯入輕提示文字 -->
+                    <div id="import-toast" class="mt-2 hidden text-center text-xs font-semibold text-emerald-400 transition-all"></div>
+
                     <hr class="my-5 border-slate-800">
                     <button onclick="generateAllTeamsImage()" class="w-full rounded-lg border border-blue-900 bg-blue-950/50 px-4 py-3 text-sm font-bold text-blue-300 transition hover:bg-blue-900/50">
                         產生全部團隊圖片
@@ -207,6 +210,46 @@
 
     <!-- 圖片暫存區 -->
     <div id="share-card"></div>
+
+    <!-- 圖片預覽彈窗 Modal -->
+    <div id="image-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="relative flex max-h-[90vh] w-full max-w-xl flex-col rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+            <!-- 標題與關閉按鈕 -->
+            <div class="mb-4 flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-100">團隊圖片預覽</h3>
+                <button onclick="closeModal()" class="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white">✕</button>
+            </div>
+
+            <!-- 圖片顯示區域 -->
+            <div class="relative flex flex-1 items-center justify-center overflow-auto rounded-lg bg-slate-950 p-2">
+                <img id="modal-img" class="max-h-[60vh] rounded object-contain shadow-lg" src="" alt="團隊圖片預覽">
+            </div>
+
+            <!-- 分頁與操作按鈕工具列 -->
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4">
+                <!-- 左右切換頁數 -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-prev" onclick="changeImage(-1)" class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-700 disabled:opacity-40">
+                        ◀ 上一頁
+                    </button>
+                    <span id="modal-page-info" class="text-xs font-semibold text-slate-400">1 / 1</span>
+                    <button id="btn-next" onclick="changeImage(1)" class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-700 disabled:opacity-40">
+                        下一頁 ▶
+                    </button>
+                </div>
+
+                <!-- 動作按鈕 -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-copy-img" onclick="copyModalImage()" class="rounded-lg border border-blue-600 bg-blue-600/20 px-3 py-1.5 text-xs font-semibold text-blue-300 hover:bg-blue-600/40 transition-colors">
+                        📋 複製圖片
+                    </button>
+                    <button onclick="downloadModalImage()" class="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-500">
+                        💾 下載圖片
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -290,7 +333,7 @@
                 id: player.id || Date.now() + "-" + Math.random().toString(36).substring(2, 10),
                 level: getPlayerLevel(player),
                 name: String(player.name || player["名稱"] || player["名字"] || "").trim(),
-                job: String(player.job || player["職業"] || "未填").trim(),
+                job: String(player.job || player["職業"] || "職業").trim(),
                 position: String(player.position || player["位置"] || "").trim()
             };
 
@@ -458,13 +501,33 @@
             saveState(true);
         }
 
+        /* 手動新增空白成員至待分配名單 */
+        function addEmptyPoolPlayer() {
+            state.pool.push({
+                id: Date.now() + "-" + Math.random().toString(36).substring(2, 10),
+                level: "",
+                name: "",
+                job: "未填",
+                position: ""
+            });
+            saveState();
+        }
+
+        /* 刪除待分配名單內的成員 */
+        function deletePoolPlayer(index) {
+            const player = state.pool[index];
+            const name = player ? (player.name || "未命名玩家") : "成員";
+            if (confirm(`確定要刪除待分配名單中的「${name}」嗎？`)) {
+                state.pool.splice(index, 1);
+                saveState();
+            }
+        }
+
+        let importToastTimer = null;
         function handleBatchImport() {
             const input = document.getElementById("paste-input");
             const text = input.value.trim();
-            if (!text) {
-                alert("請先貼上名單。");
-                return;
-            }
+            if (!text) return;
 
             let addedCount = 0;
             let skippedCount = 0;
@@ -521,7 +584,18 @@
 
             input.value = "";
             saveState();
-            alert(`成功加入 ${addedCount} 人到共用待分配名單。`);
+
+            // 顯示按鈕下方的成功提示（無彈窗）
+            const toast = document.getElementById("import-toast");
+            if (toast && addedCount > 0) {
+                toast.innerText = `✓ 已成功加入 ${addedCount} 人至名單`;
+                toast.classList.remove("hidden");
+
+                if (importToastTimer) clearTimeout(importToastTimer);
+                importToastTimer = setTimeout(() => {
+                    toast.classList.add("hidden");
+                }, 2000);
+            }
         }
 
         function moveTo(index, fromGroup, toGroup) {
@@ -663,15 +737,21 @@
                             <span>👥</span>
                             共用待分配名單
                         </h2>
-                        <span class="rounded-full bg-blue-950 px-2.5 py-1 text-xs font-semibold text-blue-400">
-                            ${state.pool.length} 人
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <!-- 手動新增空白成員按鈕 -->
+                            <button onclick="addEmptyPoolPlayer()" class="rounded-lg border border-blue-600/50 bg-blue-600/20 px-2.5 py-1 text-xs font-semibold text-blue-300 hover:bg-blue-600/40 transition">
+                                ➕ 新增成員
+                            </button>
+                            <span class="rounded-full bg-blue-950 px-2.5 py-1 text-xs font-semibold text-blue-400">
+                                ${state.pool.length} 人
+                            </span>
+                        </div>
                     </div>
                     <div id="pool-list" data-list-type="pool" class="sortable-list flex min-h-[80px] flex-wrap gap-2">
             `;
 
             if (state.pool.length === 0) {
-                html += `<p class="empty-msg py-2 text-sm text-slate-500">目前沒有待分配成員（可拖甩玩家至此）。</p>`;
+                html += `<p class="empty-msg py-2 text-sm text-slate-500">目前沒有待分配成員（可拖甩玩家至此或手動新增）。</p>`;
             } else {
                 state.pool.forEach((player, index) => {
                     const level = getPlayerLevel(player);
@@ -710,6 +790,10 @@
                                     class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-500 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改位置">
                             </div>
+                            <!-- 成員刪除按鈕 -->
+                            <button onclick="deletePoolPlayer(${index})" title="刪除此成員" class="ml-1 rounded bg-slate-900 border border-slate-800 px-1.5 py-0.5 text-xs text-rose-400 hover:bg-rose-950 hover:border-rose-800 transition">
+                                ✕
+                            </button>
                         </div>
                     `;
                 });
@@ -739,8 +823,8 @@
                         }
                     },
                     animation: 150,
-                    filter: 'input, button', // 點擊或聚焦在輸入框與按鈕時不觸發拖甩，避免無法打字
-                    preventOnFilter: false, // 允許輸入框正常的 focus / 點擊行為
+                    filter: 'input, button', // 點擊或聚焦在輸入框與按鈕時不觸發拖甩
+                    preventOnFilter: false,
                     ghostClass: 'sortable-ghost',
                     dragClass: 'sortable-drag',
                     onEnd: function (evt) {
@@ -754,7 +838,6 @@
                         const group = currentGroup();
                         let item;
 
-                        // 移除原位置元素
                         if (fromType === 'pool') {
                             item = state.pool.splice(oldIndex, 1)[0];
                         } else {
@@ -763,7 +846,6 @@
 
                         if (!item) return;
 
-                        // 放進新位置
                         if (toType === 'pool') {
                             state.pool.splice(newIndex, 0, item);
                         } else {
@@ -794,9 +876,11 @@
             `;
         }
 
+        let previewImages = [];
+        let currentImageIndex = 0;
+
         async function generateAllTeamsImage() {
             if (typeof html2canvas === "undefined") {
-                alert("圖片工具尚未載入完成，請稍後再試。");
                 return;
             }
 
@@ -812,14 +896,10 @@
             });
 
             if (activeGroups.length === 0) {
-                alert("目前所有團隊都沒有成員，沒有可產生的圖片。");
                 return;
             }
 
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, "0");
-            const day = String(today.getDate()).padStart(2, "0");
+            previewImages = [];
 
             for (let i = 0; i < activeGroups.length; i++) {
                 const { groupIndex, group } = activeGroups[i];
@@ -861,19 +941,94 @@
                         imageTimeout: 0
                     });
 
-                    const link = document.createElement("a");
-                    link.download = `Artale_第${groupIndex + 1}團_${year}-${month}-${day}.png`;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
+                    previewImages.push({
+                        title: `第 ${groupIndex + 1} 團`,
+                        dataUrl: canvas.toDataURL("image/png")
+                    });
 
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 } catch (error) {
                     console.error("產生團隊圖片失敗：", error);
                 }
             }
 
             shareCard.innerHTML = "";
-            alert(`已成功產生並下載 ${activeGroups.length} 張團隊圖片！`);
+
+            if (previewImages.length > 0) {
+                currentImageIndex = 0;
+                showModal();
+            }
+        }
+
+        /* 彈窗展示控制 */
+        function showModal() {
+            updateModalContent();
+            document.getElementById("image-modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("image-modal").classList.add("hidden");
+        }
+
+        function updateModalContent() {
+            const item = previewImages[currentImageIndex];
+            document.getElementById("modal-img").src = item.dataUrl;
+            document.getElementById("modal-title").innerText = `圖片預覽 - ${item.title}`;
+            document.getElementById("modal-page-info").innerText = `${currentImageIndex + 1} / ${previewImages.length}`;
+
+            document.getElementById("btn-prev").disabled = currentImageIndex === 0;
+            document.getElementById("btn-next").disabled = currentImageIndex === previewImages.length - 1;
+        }
+
+        function changeImage(step) {
+            const newIndex = currentImageIndex + step;
+            if (newIndex >= 0 && newIndex < previewImages.length) {
+                currentImageIndex = newIndex;
+                updateModalContent();
+            }
+        }
+
+        /* 複製圖片至剪貼簿（無彈窗，按鈕輕提示） */
+        let copyBtnTimer = null;
+        async function copyModalImage() {
+            const copyBtn = document.getElementById("btn-copy-img");
+            try {
+                const item = previewImages[currentImageIndex];
+                const res = await fetch(item.dataUrl);
+                const blob = await res.blob();
+                
+                await navigator.clipboard.write([
+                    new ClipboardItem({ [blob.type]: blob })
+                ]);
+                
+                if (copyBtn) {
+                    copyBtn.innerText = "✓ 已複製！";
+                    copyBtn.classList.remove("border-blue-600", "bg-blue-600/20", "text-blue-300");
+                    copyBtn.classList.add("border-emerald-500", "bg-emerald-600/20", "text-emerald-300");
+
+                    if (copyBtnTimer) clearTimeout(copyBtnTimer);
+                    copyBtnTimer = setTimeout(() => {
+                        copyBtn.innerText = "📋 複製圖片";
+                        copyBtn.classList.remove("border-emerald-500", "bg-emerald-600/20", "text-emerald-300");
+                        copyBtn.classList.add("border-blue-600", "bg-blue-600/20", "text-blue-300");
+                    }, 1500);
+                }
+            } catch (err) {
+                console.error("複製失敗：", err);
+                if (copyBtn) {
+                    copyBtn.innerText = "✕ 複製失敗";
+                    setTimeout(() => { copyBtn.innerText = "📋 複製圖片"; }, 1500);
+                }
+            }
+        }
+
+        /* 下載圖片 */
+        function downloadModalImage() {
+            const item = previewImages[currentImageIndex];
+            const link = document.createElement("a");
+            link.download = `Artale_${item.title}.png`;
+            link.href = item.dataUrl;
+            link.click();
         }
 
         function render() {
