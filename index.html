@@ -566,22 +566,22 @@
                 } else if (parts.length === 3) {
                     if (isLevel(parts[0])) {
                         level = normalizeLevel(parts[0]);
-                        job = parts[1];
-                        name = parts[2];
-                    } else {
-                        job = parts[0];
                         name = parts[1];
+                        job = parts[2];
+                    } else {
+                        name = parts[0];
+                        job = parts[1];
                         position = parts[2];
                     }
                 } else {
                     if (isLevel(parts[0])) {
                         level = normalizeLevel(parts[0]);
-                        job = parts[1];
-                        name = parts[2];
+                        name = parts[1];
+                        job = parts[2];
                         position = parts.slice(3).join(" ");
                     } else {
-                        job = parts[0];
-                        name = parts[1];
+                        name = parts[0];
+                        job = parts[1];
                         position = parts.slice(2).join(" ");
                     }
                 }
