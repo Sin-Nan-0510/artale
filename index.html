@@ -186,8 +186,8 @@
 
             <div class="space-y-6">
                 <div class="sticky top-6 rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
-                    <textarea id="paste-input" rows="7" class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="等級 名字 職業 位置
-等級 名字 職業 位置"></textarea>
+                    <textarea id="paste-input" rows="7" class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="等級 職業 名字 位置
+等級 職業 名字 位置"></textarea>
                     <button onclick="handleBatchImport()" class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500">
                         加入共用待分配名單
                     </button>
@@ -561,27 +561,27 @@
                     name = parts[0];
                     job = "";
                 } else if (parts.length === 2) {
-                    name = parts[0];
-                    job = parts[1];
+                    job = parts[0];
+                    name = parts[1];
                 } else if (parts.length === 3) {
                     if (isLevel(parts[0])) {
                         level = normalizeLevel(parts[0]);
-                        name = parts[1];
-                        job = parts[2];
-                    } else {
-                        name = parts[0];
                         job = parts[1];
+                        name = parts[2];
+                    } else {
+                        job = parts[0];
+                        name = parts[1];
                         position = parts[2];
                     }
                 } else {
                     if (isLevel(parts[0])) {
                         level = normalizeLevel(parts[0]);
-                        name = parts[1];
-                        job = parts[2];
+                        job = parts[1];
+                        name = parts[2];
                         position = parts.slice(3).join(" ");
                     } else {
-                        name = parts[0];
-                        job = parts[1];
+                        job = parts[0];
+                        name = parts[1];
                         position = parts.slice(2).join(" ");
                     }
                 }
@@ -786,18 +786,18 @@
                                     title="點擊修改等級">
                                 <input
                                     type="text"
-                                    value="${escapeHtml(player.name)}"
-                                    placeholder="名字"
-                                    onchange="updatePlayerField('pool', ${index}, 'name', this.value)"
-                                    class="w-20 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
-                                    title="點擊修改名字">
-                                <input
-                                    type="text"
                                     value="${escapeHtml(player.job)}"
                                     placeholder="職業"
                                     onchange="updatePlayerField('pool', ${index}, 'job', this.value)"
                                     class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-400 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改職業">
+                                <input
+                                    type="text"
+                                    value="${escapeHtml(player.name)}"
+                                    placeholder="名字"
+                                    onchange="updatePlayerField('pool', ${index}, 'name', this.value)"
+                                    class="w-20 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改名字">
                                 <input
                                     type="text"
                                     value="${escapeHtml(player.position)}"
