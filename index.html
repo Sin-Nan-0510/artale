@@ -186,7 +186,8 @@
 
             <div class="space-y-6">
                 <div class="sticky top-6 rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm">
-                    <textarea id="paste-input" rows="7" class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="等級 名字 職業 位置"></textarea>
+                    <textarea id="paste-input" rows="7" class="mb-3 w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-sm text-slate-200 focus:border-blue-500 focus:outline-none" placeholder="等級 名字 職業 位置
+等級 名字 職業 位置"></textarea>
                     <button onclick="handleBatchImport()" class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-500">
                         加入共用待分配名單
                     </button>
@@ -481,6 +482,21 @@
             return weekdays[d.getDay()];
         }
 
+        // IME 注音輸入事件處理機制，防止拼音過程中畫面刷新跳掉
+        function handleInput(el, targetType, index, field) {
+            if (el.isComposing) return;
+            updatePlayerField(targetType, index, field, el.value);
+        }
+
+        function handleCompositionStart(el) {
+            el.isComposing = true;
+        }
+
+        function handleCompositionEnd(el, targetType, index, field) {
+            el.isComposing = false;
+            updatePlayerField(targetType, index, field, el.value);
+        }
+
         function updatePlayerField(targetType, index, field, value) {
             let player = null;
             if (targetType === "pool") {
@@ -662,35 +678,43 @@
                                     placeholder="-"
                                     maxlength="3"
                                     inputmode="numeric"
-                                    oninput="updatePlayerField('${teamName}', ${index}, 'level', this.value)"
+                                    oninput="handleInput(this, '${teamName}', ${index}, 'level')"
+                                    oncompositionstart="handleCompositionStart(this)"
+                                    oncompositionend="handleCompositionEnd(this, '${teamName}', ${index}, 'level')"
                                     class="w-8 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改等級">
                             </div>
-
-                            <!-- 名字輸入框 -->
-                            <input
-                                type="text"
-                                value="${escapeHtml(player.name)}"
-                                placeholder="名字"
-                                oninput="updatePlayerField('${teamName}', ${index}, 'name', this.value)"
-                                class="w-24 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
-                                title="點擊修改名字">
 
                             <!-- 職業輸入框 -->
                             <input
                                 type="text"
                                 value="${escapeHtml(player.job)}"
                                 placeholder="職業"
-                                oninput="updatePlayerField('${teamName}', ${index}, 'job', this.value)"
+                                oninput="handleInput(this, '${teamName}', ${index}, 'job')"
+                                oncompositionstart="handleCompositionStart(this)"
+                                oncompositionend="handleCompositionEnd(this, '${teamName}', ${index}, 'job')"
                                 class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-400 focus:border-blue-500 focus:outline-none"
                                 title="點擊修改職業">
+
+                            <!-- 名字輸入框 -->
+                            <input
+                                type="text"
+                                value="${escapeHtml(player.name)}"
+                                placeholder="名字"
+                                oninput="handleInput(this, '${teamName}', ${index}, 'name')"
+                                oncompositionstart="handleCompositionStart(this)"
+                                oncompositionend="handleCompositionEnd(this, '${teamName}', ${index}, 'name')"
+                                class="w-24 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
+                                title="點擊修改名字">
 
                             <!-- 位置輸入框 -->
                             <input
                                 type="text"
                                 value="${escapeHtml(player.position)}"
                                 placeholder="位置"
-                                oninput="updatePlayerField('${teamName}', ${index}, 'position', this.value)"
+                                oninput="handleInput(this, '${teamName}', ${index}, 'position')"
+                                oncompositionstart="handleCompositionStart(this)"
+                                oncompositionend="handleCompositionEnd(this, '${teamName}', ${index}, 'position')"
                                 class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-500 focus:border-blue-500 focus:outline-none"
                                 title="點擊修改位置">
                         </div>
@@ -765,28 +789,36 @@
                                     placeholder="-"
                                     maxlength="3"
                                     inputmode="numeric"
-                                    oninput="updatePlayerField('pool', ${index}, 'level', this.value)"
+                                    oninput="handleInput(this, 'pool', ${index}, 'level')"
+                                    oncompositionstart="handleCompositionStart(this)"
+                                    oncompositionend="handleCompositionEnd(this, 'pool', ${index}, 'level')"
                                     class="w-8 rounded border border-slate-800 bg-slate-900 px-1 py-0.5 text-center text-xs font-semibold text-blue-400 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改等級">
                                 <input
                                     type="text"
-                                    value="${escapeHtml(player.name)}"
-                                    placeholder="名字"
-                                    oninput="updatePlayerField('pool', ${index}, 'name', this.value)"
-                                    class="w-20 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
-                                    title="點擊修改名字">
-                                <input
-                                    type="text"
                                     value="${escapeHtml(player.job)}"
                                     placeholder="職業"
-                                    oninput="updatePlayerField('pool', ${index}, 'job', this.value)"
+                                    oninput="handleInput(this, 'pool', ${index}, 'job')"
+                                    oncompositionstart="handleCompositionStart(this)"
+                                    oncompositionend="handleCompositionEnd(this, 'pool', ${index}, 'job')"
                                     class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-400 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改職業">
                                 <input
                                     type="text"
+                                    value="${escapeHtml(player.name)}"
+                                    placeholder="名字"
+                                    oninput="handleInput(this, 'pool', ${index}, 'name')"
+                                    oncompositionstart="handleCompositionStart(this)"
+                                    oncompositionend="handleCompositionEnd(this, 'pool', ${index}, 'name')"
+                                    class="w-20 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs font-bold text-slate-200 focus:border-blue-500 focus:outline-none"
+                                    title="點擊修改名字">
+                                <input
+                                    type="text"
                                     value="${escapeHtml(player.position)}"
                                     placeholder="位置"
-                                    oninput="updatePlayerField('pool', ${index}, 'position', this.value)"
+                                    oninput="handleInput(this, 'pool', ${index}, 'position')"
+                                    oncompositionstart="handleCompositionStart(this)"
+                                    oncompositionend="handleCompositionEnd(this, 'position')"
                                     class="w-16 rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-xs text-slate-500 focus:border-blue-500 focus:outline-none"
                                     title="點擊修改位置">
                             </div>
